@@ -35,6 +35,7 @@ def novo_evento(request):
             cor_secundaria = cor_secundaria,
             cor_fundo = cor_fundo
         )
+        
         evento.save()
 
         messages.add_message(request, messages.SUCCESS, 'Evento criado com sucesso!')
