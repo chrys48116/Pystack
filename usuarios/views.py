@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.messages import constants
 from django.urls import reverse
+from django.contrib import auth
 
 # Create your views here.
 def cadastro(request):
@@ -26,7 +27,28 @@ def cadastro(request):
             messages.add_message(request, constants.ERROR, 'Usuario já existe.')
             return redirect(reverse('cadastro'))
 
-        user = User.objects.create_user(username=username, email=email, senha=senha)
+        user = User.objects.create_user(username=username, email=email, password=senha)
+        user.save()
         messages.add_message(request, constants.SUCCESS, 'Usuario cadastrado com sucesso.')
         
         return redirect(reverse('login'))
+
+def login(request):
+    if request.method == 'GET':
+        return render(request, 'login.html')
+    
+    elif request.method == 'POST':
+        username = request.POST.get('username')
+        senha = request.POST.get('senha')
+
+        user = auth.authenticate(username=username, password=senha)
+
+        if not user:
+            messages.add_message(request, constants.ERROR, 'Usuario ou senha invalidos.')
+            return redirect(reverse('login'))
+
+        auth.login(request, user)
+
+        messages.add_message(request, constants.SUCCESS, 'Login realizado com sucesso.')
+
+        return redirect('/eventos/novo_evento/')
