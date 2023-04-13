@@ -40,3 +40,17 @@ def novo_evento(request):
 
         messages.add_message(request, messages.SUCCESS, 'Evento criado com sucesso!')
         return redirect(reverse('novo_evento'))
+
+def gerenciar_evento(request):
+    if request.method == 'GET':
+        nome = request.GET.get('nome')
+        eventos = Evento.objects.filter(criador=request.user)
+        
+        if nome:
+            eventos = eventos.filter(nome__icontains=nome)
+
+        return render(request, 'gerenciar_evento.html', {'eventos':eventos})
+    
+def inscrever_evento(request, id):
+    evento = Evento.objects.filter(id)
+    return render(request, 'inscrever_evento.html')
